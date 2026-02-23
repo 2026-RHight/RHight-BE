@@ -1,0 +1,15 @@
+#!/bin/sh
+
+echo "🔍 Running Spotless Check..."
+
+# Spotless 검사를 실행합니다.
+# 윈도우 환경(Git Bash)과 맥 모두에서 작동하도록 ./gradlew를 사용합니다.
+./gradlew spotlessCheck
+
+# 검사 결과가 실패(exit code가 0이 아님)면 커밋을 중단합니다.
+if [ $? -ne 0 ]; then
+    echo "❌ Spotless check failed! Please run './gradlew spotlessApply' and try again."
+    exit 1
+fi
+
+echo "✅ Spotless check passed. Committing..."

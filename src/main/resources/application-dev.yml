@@ -1,0 +1,20 @@
+spring:
+  config:
+    activate:
+      on-profile: dev
+
+  datasource:
+    url: ${DEV_DB_URL}
+    driver-class-name: org.mariadb.jdbc.Driver
+    username: ${DEV_DB_USER}
+    password: ${DEV_DB_PASSWORD} # 비밀번호는 환경변수 권장
+
+  jpa:
+    hibernate:
+      ddl-auto: update # 개발 서버는 유지보수를 위해 update 사용
+    show-sql: true
+
+s3:
+  endpoint: http://dev.macacolabs.site:9000
+  access-key: ${DEV_S3_KEY}
+  secret-key: ${DEV_S3_SECRET}
