@@ -7,9 +7,8 @@ import org.springframework.modulith.core.ApplicationModules;
 @SpringBootTest
 class RhightApplicationTests {
 
-	@Test
-	void contextLoads() {
-	}
+    @Test
+    void contextLoads() {}
 
     @Test
     void verifyModularArchitecture() {
