@@ -14,7 +14,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(UnauthorizedException.class)
     public ResponseEntity<ApiResponse<Void>> handleUnauthorizedException(UnauthorizedException ex) {
-        log.error("InvalidException 발생:  Message: {}", ex.getMessage());
+        log.error("UnauthorizedException 발생:  Message: {}", ex.getMessage());
 
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ApiResponse.fail(ex));
     }
@@ -39,6 +39,9 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiResponse<Void>> handleException(Exception ex) {
         log.error("예상치 못한 에러 발생: ", ex);
 
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ApiResponse.fail(ex));
+        ErrorResponse error = ErrorResponse.builder().message("서버 내부 오류가 발생했습니다.").build();
+
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(ApiResponse.fail(error));
     }
 }
