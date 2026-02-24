@@ -64,11 +64,16 @@ tasks.named('test') {
 }
 
 tasks.register('installLocalGitHook', Copy) {
+    description = 'scripts 폴더의 pre-commit 파일을 .git/hooks로 복사하고 실행 권한을 부여합니다.'
+
     from new File(rootProject.rootDir, 'scripts/pre-commit')
     into { new File(rootProject.rootDir, '.git/hooks') }
-    // 맥/리눅스 유저를 위한 실행 권한 부여
+
+    // 이 한 줄이 사진의 'makeGitHooksExecutable' 태스크 역할을 대신합니다.
     fileMode 0775
 }
 
-// 빌드할 때마다 자동으로 실행되도록 설정
-build.dependsOn installLocalGitHook
+// 빌드 전체보다는 컴파일 단계에 연결하는 것이 더 효율적입니다.
+tasks.named('compileJava') {
+    dependsOn 'installLocalGitHook'
+}
