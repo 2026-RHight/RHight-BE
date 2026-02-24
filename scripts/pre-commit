@@ -1,15 +1,32 @@
 #!/bin/sh
 
-echo "🔍 Running Spotless Check..."
+# 1. 프로젝트 루트 경로 추출
+# 어느 디렉토리에서 커밋을 시도하든 프로젝트 최상단 경로를 찾아냅니다.
+PROJECT_ROOT=$(git rev-parse --show-toplevel)
 
-# Spotless 검사를 실행합니다.
-# 윈도우 환경(Git Bash)과 맥 모두에서 작동하도록 ./gradlew를 사용합니다.
-./gradlew spotlessCheck
+# 2. 현재 스테이징된(git add 된) 파일 목록 저장
+# Spotless가 파일을 수정한 후, 수정된 내용을 다시 add하기 위해 필요합니다.
+stagedFiles=$(git diff --staged --name-only)
 
-# 검사 결과가 실패(exit code가 0이 아님)면 커밋을 중단합니다.
+echo "✨ Running Spotless Apply... (Auto-formatting)"
+
+# 3. 프로젝트 루트로 이동하여 Spotless 실행
+# ./gradlew는 맥/윈도우(Git Bash) 모두에서 공통으로 인식되는 실행 방식입니다.
+cd "$PROJECT_ROOT" || exit
+./gradlew spotlessApply
+
+# 실행 결과 확인 (exit code가 0이 아니면 에러 발생)
 if [ $? -ne 0 ]; then
-    echo "❌ Spotless check failed! Please run './gradlew spotlessApply' and try again."
+    echo "❌ Spotless apply failed! Please check your code for syntax errors."
     exit 1
 fi
 
-echo "✅ Spotless check passed. Committing..."
+# 4. 수정된 파일들을 다시 staging (핵심 로직)
+# Spotless에 의해 내용이 변한 파일들을 다시 git add 해줘야 커밋에 반영됩니다.
+for file in $stagedFiles; do
+    if [ -f "$file" ]; then
+        git add "$file"
+    fi
+done
+
+echo "✅ Auto-formatting complete and files re-staged. Committing..."
